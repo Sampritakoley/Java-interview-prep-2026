@@ -1,0 +1,1200 @@
+<!-- SECTION 2: JAVA ADVANCED -->
+
+<!-- ==================== TOPIC 5: MULTITHREADING & CONCURRENCY ==================== -->
+<section id="multithreading" class="section">
+  <div class="section-header">
+    <div class="section-icon">⚡</div>
+    <div>
+      <h2>Topic 5 — Multithreading &amp; Concurrency</h2>
+      <p class="section-subtitle">Thread safety, locks, executors, async patterns, and parallel pitfalls</p>
+    </div>
+  </div>
+
+  <!-- Thread Lifecycle -->
+  <div class="topic-group">
+    <h3 class="topic-label">Thread Lifecycle &amp; Creation</h3>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.1</span>
+        <span class="badge badge-green">🟢 Basic</span>
+        <p class="q-text">What are the states in the Java thread lifecycle?</p>
+      </div>
+      <div class="q-why">Why asked: Tests foundational understanding of thread state machine — essential before deeper concurrency topics.</div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Java defines 6 states in <code>Thread.State</code>: NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING, TERMINATED. A thread transitions from NEW → RUNNABLE on <code>start()</code>, enters BLOCKED when waiting for a monitor lock, WAITING via <code>wait()</code>/<code>join()</code>, and TIMED_WAITING via <code>sleep(ms)</code> / <code>wait(ms)</code>.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.2</span>
+        <span class="badge badge-green">🟢 Basic</span>
+        <p class="q-text">What is the difference between extending <code>Thread</code>, implementing <code>Runnable</code>, and implementing <code>Callable</code>?</p>
+      </div>
+      <div class="q-why">Why asked: Common starter question to gauge OOP understanding and awareness of return values / checked exceptions.</div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p><code>Thread</code> extension is limiting (single inheritance). <code>Runnable</code> has no return value and cannot throw checked exceptions. <code>Callable&lt;V&gt;</code> returns a <code>Future&lt;V&gt;</code> and can throw checked exceptions — preferred with <code>ExecutorService.submit()</code>.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.3</span>
+        <span class="badge badge-green">🟢 Basic</span>
+        <p class="q-text">What does <code>Thread.join()</code> do, and how does it differ from <code>Thread.sleep()</code>?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.4</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is a daemon thread? When would you use one?</p>
+      </div>
+      <div class="q-why">Why asked: Reveals understanding of JVM shutdown behavior — the JVM exits when only daemon threads remain.</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.5</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is <code>Thread.interrupt()</code> and how do you handle interruption correctly?</p>
+      </div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Interruption sets an interrupt flag. Blocking methods like <code>sleep()</code>, <code>wait()</code>, <code>join()</code> throw <code>InterruptedException</code> when interrupted. In a catch block you should either re-interrupt (<code>Thread.currentThread().interrupt()</code>) or rethrow, never silently swallow.</p>
+      </details>
+    </div>
+  </div>
+
+  <!-- synchronized & volatile -->
+  <div class="topic-group">
+    <h3 class="topic-label">synchronized, volatile &amp; Happens-Before</h3>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.6</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">Explain the Java Memory Model (JMM) and the happens-before relationship.</p>
+      </div>
+      <div class="q-why">Why asked: Senior-level question — the JMM underpins all correct concurrent code; misunderstanding leads to subtle bugs.</div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Happens-before is a guarantee: if action A happens-before action B, A's effects are visible to B. Sources: <code>synchronized</code> blocks, <code>volatile</code> writes/reads, <code>Thread.start()</code>, <code>Thread.join()</code>, and <code>Future.get()</code>. Without happens-before, the CPU or compiler may reorder operations.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.7</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the difference between <code>synchronized</code> on an instance method vs. a static method vs. a block?</p>
+      </div>
+      <div class="q-why">Why asked: Reveals understanding of monitor locks — instance lock vs. class-level lock.</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.8</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What does the <code>volatile</code> keyword guarantee and what does it NOT guarantee?</p>
+      </div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p><code>volatile</code> guarantees visibility (reads always from main memory) and prevents instruction reordering around that variable. It does NOT guarantee atomicity for compound actions like <code>i++</code> (read-modify-write). Use <code>AtomicInteger</code> or <code>synchronized</code> for atomicity.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.9</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">What is double-checked locking? Why is <code>volatile</code> essential in its correct implementation?</p>
+      </div>
+      <div class="q-why">Why asked: Classic concurrency puzzle — tests understanding of partial construction visibility and JMM.</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.10</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">What is false sharing and how can <code>@Contended</code> or padding help?</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Locks -->
+  <div class="topic-group">
+    <h3 class="topic-label">Locks: ReentrantLock, ReadWriteLock, StampedLock</h3>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.11</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">How does <code>ReentrantLock</code> differ from <code>synchronized</code>? When would you prefer it?</p>
+      </div>
+      <div class="q-why">Why asked: Practical API knowledge — ReentrantLock adds fairness, tryLock(), lockInterruptibly(), and multiple Condition objects.</div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Key advantages: <code>tryLock(timeout)</code> avoids indefinite blocking; <code>lockInterruptibly()</code> supports cancellation; fair mode prevents starvation; multiple <code>Condition</code>s replace single wait-set. Downside: must manually unlock in <code>finally</code>.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.12</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is <code>ReadWriteLock</code> and in what scenarios does it outperform a simple <code>ReentrantLock</code>?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.13</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">What is <code>StampedLock</code> and how does its optimistic read mode work?</p>
+      </div>
+      <div class="q-why">Why asked: Java 8+ lock — shows awareness of lock-striping and optimistic concurrency strategies.</div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Optimistic read acquires a stamp without blocking. You perform the read, then call <code>validate(stamp)</code>. If it returns false (a write occurred), fall back to a full read lock. This avoids the overhead of read-lock acquisition in low-write-contention scenarios. <code>StampedLock</code> is non-reentrant.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.14</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the difference between <code>wait()/notify()</code> and <code>Condition.await()/signal()</code>?</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ExecutorService -->
+  <div class="topic-group">
+    <h3 class="topic-label">ExecutorService &amp; ThreadPoolExecutor</h3>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.15</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">Explain <code>ThreadPoolExecutor</code> parameters: corePoolSize, maximumPoolSize, keepAliveTime, and workQueue. How does the executor decide to spawn new threads?</p>
+      </div>
+      <div class="q-why">Why asked: Critical for production systems — wrong pool configuration causes thread starvation or OOM.</div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Order of operations: (1) if active threads &lt; corePoolSize → create thread; (2) else enqueue task; (3) if queue full and active &lt; maxPoolSize → create thread; (4) else apply RejectedExecutionHandler. Choosing queue type (bounded <code>ArrayBlockingQueue</code> vs unbounded <code>LinkedBlockingQueue</code>) has major impact on behavior.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.16</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What are the differences between <code>newFixedThreadPool</code>, <code>newCachedThreadPool</code>, <code>newSingleThreadExecutor</code>, and <code>newScheduledThreadPool</code>?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.17</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What are the four <code>RejectedExecutionHandler</code> policies in Java and when would you use each?</p>
+      </div>
+      <div class="q-why">Why asked: Shows awareness of back-pressure and graceful degradation strategies.</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.18</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">How do you gracefully shut down an <code>ExecutorService</code>? What is the difference between <code>shutdown()</code> and <code>shutdownNow()</code>?</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CompletableFuture -->
+  <div class="topic-group">
+    <h3 class="topic-label">CompletableFuture &amp; Async Pipelines</h3>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.19</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is <code>CompletableFuture</code> and how does it improve upon <code>Future</code>?</p>
+      </div>
+      <div class="q-why">Why asked: Async programming is pervasive — interviewers want to know you can compose async steps without callback hell.</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.20</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the difference between <code>thenApply()</code>, <code>thenCompose()</code>, and <code>thenCombine()</code>?</p>
+      </div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p><code>thenApply</code> transforms the result (like <code>map</code>). <code>thenCompose</code> chains a stage that itself returns a <code>CompletableFuture</code> (like <code>flatMap</code>). <code>thenCombine</code> merges results of two independent futures when both complete.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.21</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">How do <code>CompletableFuture.allOf()</code> and <code>anyOf()</code> work? What are their return types?</p>
+      </div>
+      <div class="q-why">Why asked: Fan-out/fan-in patterns are common in microservices — fetching from multiple services in parallel.</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.22</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">How does <code>exceptionally()</code> differ from <code>handle()</code> and <code>whenComplete()</code> for error handling in <code>CompletableFuture</code> chains?</p>
+      </div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p><code>exceptionally</code> only triggers on failure and returns a recovery value. <code>handle</code> runs on both success and failure and can transform either. <code>whenComplete</code> runs on both but cannot transform the result — it's for side effects (logging, cleanup). <code>handle</code> is the most powerful.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.23</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">Which thread pool does <code>CompletableFuture.supplyAsync()</code> use by default? How can you customize it and why would you?</p>
+      </div>
+      <div class="q-why">Why asked: Default ForkJoinPool.commonPool() is shared — blocking tasks in it starve other async work.</div>
+    </div>
+  </div>
+
+  <!-- Fork/Join -->
+  <div class="topic-group">
+    <h3 class="topic-label">Fork/Join &amp; Atomic Classes</h3>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.24</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">Explain the Fork/Join framework. What is work-stealing and why does it improve performance?</p>
+      </div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Fork/Join recursively splits tasks (RecursiveTask returns value, RecursiveAction doesn't). Work-stealing: idle threads steal tasks from the tail of busy threads' deques, reducing idle time and load imbalance. Optimal for divide-and-conquer CPU-bound work.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.25</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is Compare-And-Swap (CAS) and how do <code>AtomicInteger</code> and <code>AtomicReference</code> use it?</p>
+      </div>
+      <div class="q-why">Why asked: CAS is the foundation of lock-free data structures — important for performance-critical code.</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.26</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">What is the ABA problem in CAS operations and how does <code>AtomicStampedReference</code> solve it?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.27</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">When would you use <code>LongAdder</code> instead of <code>AtomicLong</code>?</p>
+      </div>
+      <div class="q-why">Why asked: <code>LongAdder</code> reduces contention under heavy write load via cell striping — a subtle but impactful optimization.</div>
+    </div>
+  </div>
+
+  <!-- Deadlock / ThreadLocal -->
+  <div class="topic-group">
+    <h3 class="topic-label">Deadlock, Livelock, Starvation &amp; ThreadLocal</h3>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.28</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What are the four necessary conditions for a deadlock? How do you detect and prevent it in Java?</p>
+      </div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Coffman conditions: mutual exclusion, hold-and-wait, no preemption, circular wait. Prevention: lock ordering (always acquire locks in same global order), <code>tryLock(timeout)</code> to back off, or use higher-level abstractions. Detection: thread dump (<code>jstack</code>) shows threads waiting in a cycle.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.29</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the difference between deadlock, livelock, and starvation?</p>
+      </div>
+      <div class="q-why">Why asked: Distinguishing these concepts demonstrates real-world concurrency debugging experience.</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">5.30</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is <code>ThreadLocal</code>? What are common use cases and potential pitfalls (especially in thread pools)?</p>
+      </div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>ThreadLocal provides per-thread storage — useful for request context (user ID, transaction) without passing it through every method. In thread pools, threads are reused: always call <code>remove()</code> after use to prevent stale data leaking across requests. Overuse leads to hidden coupling and memory leaks.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TOPIC 6: JAVA 8+ FEATURES ==================== -->
+<section id="java8" class="section">
+  <div class="section-header">
+    <div class="section-icon">☕</div>
+    <div>
+      <h2>Topic 6 — Java 8+ Features</h2>
+      <p class="section-subtitle">Lambdas, Streams, Optional, and modern Java evolution through Java 21</p>
+    </div>
+  </div>
+
+  <!-- Lambdas & Functional Interfaces -->
+  <div class="topic-group">
+    <h3 class="topic-label">Lambdas &amp; Functional Interfaces</h3>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.1</span>
+        <span class="badge badge-green">🟢 Basic</span>
+        <p class="q-text">What is a lambda expression in Java? What is "effectively final" and why does it matter?</p>
+      </div>
+      <div class="q-why">Why asked: Lambdas are the cornerstone of Java 8 — interviewers want to know you understand the closure model.</div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>A lambda captures variables from its enclosing scope. Those variables must be final or effectively final (not reassigned after initialization). This ensures the lambda doesn't observe unexpected mutations, aligning with the functional programming model.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.2</span>
+        <span class="badge badge-green">🟢 Basic</span>
+        <p class="q-text">What is a functional interface? Name the four core functional interfaces in <code>java.util.function</code> and describe their method signatures.</p>
+      </div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p><code>Function&lt;T,R&gt;</code>: T→R. <code>Predicate&lt;T&gt;</code>: T→boolean. <code>Consumer&lt;T&gt;</code>: T→void. <code>Supplier&lt;T&gt;</code>: ()→T. Also: <code>BiFunction&lt;T,U,R&gt;</code>, <code>UnaryOperator&lt;T&gt;</code> (T→T), <code>BinaryOperator&lt;T&gt;</code> (T,T→T).</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.3</span>
+        <span class="badge badge-green">🟢 Basic</span>
+        <p class="q-text">What are the four types of method references in Java? Give an example of each.</p>
+      </div>
+      <div class="q-why">Why asked: Commonly tested to distinguish instance vs. static vs. constructor references — a quick but revealing question.</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.4</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">How do you compose <code>Function</code> instances using <code>andThen()</code> and <code>compose()</code>? What is the difference?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.5</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">How do <code>Predicate.and()</code>, <code>or()</code>, and <code>negate()</code> work? Write an example combining two predicates.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stream API -->
+  <div class="topic-group">
+    <h3 class="topic-label">Stream API</h3>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.6</span>
+        <span class="badge badge-green">🟢 Basic</span>
+        <p class="q-text">What is a Stream in Java? How does lazy evaluation work, and what triggers terminal operations?</p>
+      </div>
+      <div class="q-why">Why asked: Misunderstanding laziness leads to bugs where no processing happens without a terminal operation.</div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Intermediate operations (<code>filter</code>, <code>map</code>, <code>sorted</code>) are lazy — they build a pipeline but don't execute. Terminal operations (<code>collect</code>, <code>count</code>, <code>forEach</code>, <code>findFirst</code>) trigger traversal. Short-circuit terminals (<code>findFirst</code>, <code>anyMatch</code>) can stop early.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.7</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the difference between <code>map()</code> and <code>flatMap()</code> in streams? Provide a use case for each.</p>
+      </div>
+      <div class="q-why">Why asked: Classic stream question — flatMap confusion is extremely common in interviews and real code.</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.8</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">How does <code>Stream.reduce()</code> work? What is the difference between its identity and no-identity overloads?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.9</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">How do you use <code>Collectors.groupingBy()</code> and <code>Collectors.partitioningBy()</code>? What is the difference?</p>
+      </div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p><code>groupingBy</code> produces a <code>Map&lt;K, List&lt;T&gt;&gt;</code> with arbitrary keys. <code>partitioningBy</code> always produces a <code>Map&lt;Boolean, List&lt;T&gt;&gt;</code> — exactly two groups based on a predicate. Use <code>partitioningBy</code> when the split is strictly boolean.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.10</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is <code>Collectors.toUnmodifiableList()</code> vs <code>Collectors.toList()</code>? When should you prefer each?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.11</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">How do parallel streams work? What are the conditions under which they improve performance, and what are their pitfalls?</p>
+      </div>
+      <div class="q-why">Why asked: Parallel streams are often misused — knowing when NOT to use them is as important as knowing how.</div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Parallel streams use ForkJoinPool.commonPool(). They help when: data is large (10k+ elements), operations are CPU-bound and stateless, source is easily splittable (arrays &gt; ArrayList &gt; LinkedList). Pitfalls: thread-safety of shared state, ordering requirements (<code>forEachOrdered</code>), overhead for small collections, blocking I/O in common pool.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.12</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">What is a custom <code>Collector</code>? What are the five components of the <code>Collector</code> interface?</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Optional -->
+  <div class="topic-group">
+    <h3 class="topic-label">Optional</h3>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.13</span>
+        <span class="badge badge-green">🟢 Basic</span>
+        <p class="q-text">What is <code>Optional</code> and what problem does it solve? What is its intended usage?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.14</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the difference between <code>orElse()</code>, <code>orElseGet()</code>, and <code>orElseThrow()</code>?</p>
+      </div>
+      <div class="q-why">Why asked: <code>orElse</code> always evaluates its argument; <code>orElseGet</code> is lazy — a subtle but important performance distinction.</div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p><code>orElse(value)</code>: always evaluates value, even if Optional is present. <code>orElseGet(supplier)</code>: supplier called only if empty — prefer when the default is expensive to compute. <code>orElseThrow()</code>: throws <code>NoSuchElementException</code> or a custom exception via supplier.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.15</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What anti-patterns exist with <code>Optional</code>? (e.g., using <code>isPresent()/get()</code>, using as a field type, using in method parameters)</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Default/Static Interface Methods -->
+  <div class="topic-group">
+    <h3 class="topic-label">Default/Static Interface Methods &amp; Date-Time API</h3>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.16</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What are default and static methods in interfaces? How do they differ, and what conflict resolution rules apply when a class implements two interfaces with the same default method?</p>
+      </div>
+      <div class="q-why">Why asked: Tests diamond-problem awareness in the context of interface evolution.</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.17</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What are the key classes in the Java 8 Date/Time API? How does <code>ZonedDateTime</code> differ from <code>LocalDateTime</code>?</p>
+      </div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p><code>LocalDateTime</code> has no timezone — it's a wall-clock representation. <code>ZonedDateTime</code> includes timezone rules (DST-aware). <code>Instant</code> is an absolute point in time (epoch-based). <code>Duration</code> measures time-based amounts; <code>Period</code> measures date-based amounts (years, months, days).</p>
+      </details>
+    </div>
+  </div>
+
+  <!-- Java 9-17 -->
+  <div class="topic-group">
+    <h3 class="topic-label">Java 9 → Java 17 Highlights</h3>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.18</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What are Java modules (JPMS) introduced in Java 9? What problems do they solve over packages?</p>
+      </div>
+      <div class="q-why">Why asked: Large codebase modularity is a common architectural concern — basic awareness expected at senior level.</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.19</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What do <code>Stream.takeWhile()</code> and <code>Stream.dropWhile()</code> (Java 9) do? How do they differ from <code>filter()</code>?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.20</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What new String methods were introduced in Java 11? (<code>isBlank</code>, <code>strip</code>, <code>lines</code>, <code>repeat</code>)</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.21</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the new <code>HttpClient</code> introduced in Java 11? How does it compare to Apache HttpClient or OkHttp?</p>
+      </div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Java 11's <code>HttpClient</code> supports HTTP/2, WebSockets, async sending (<code>sendAsync</code> returns <code>CompletableFuture</code>), and is immutable/thread-safe. It's a significant upgrade over the old <code>HttpURLConnection</code>, but third-party clients still offer more ecosystem integrations.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.22</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What are text blocks (Java 13/15)? How do you handle indentation and special characters?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.23</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What are records in Java 16? What do they automatically generate and what are their limitations?</p>
+      </div>
+      <div class="q-why">Why asked: Records are increasingly used as DTOs — interviewers want to know you can use them and know their constraints (immutable, no inheritance).</div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Records auto-generate: canonical constructor, accessors (no getX — just x()), <code>equals</code>, <code>hashCode</code>, <code>toString</code>. Limitations: implicitly final, cannot extend another class, all fields implicitly final. You can define compact constructors for validation.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.24</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What are sealed classes (Java 17)? How do they enable exhaustive pattern matching?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.25</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is pattern matching for <code>instanceof</code> (Java 16)? How does it reduce boilerplate?</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Java 21 -->
+  <div class="topic-group">
+    <h3 class="topic-label">Java 21: Virtual Threads &amp; Modern Features</h3>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.26</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">What are virtual threads (Project Loom, Java 21)? How do they differ from platform threads and what problem do they solve?</p>
+      </div>
+      <div class="q-why">Why asked: Virtual threads are the most significant Java concurrency advancement in years — expected knowledge for any 2024+ senior role.</div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Virtual threads are lightweight (managed by the JVM, not the OS) — you can create millions of them. They mount/unmount from platform threads when blocking. Solve the "one-thread-per-request" scalability problem: blocking I/O no longer blocks a platform thread. Created via <code>Thread.ofVirtual().start()</code> or <code>Executors.newVirtualThreadPerTaskExecutor()</code>.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.27</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">What is structured concurrency (Java 21 preview)? How does it improve upon <code>ExecutorService</code> for composing concurrent tasks?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.28</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What are sequenced collections introduced in Java 21? Name the three new interfaces.</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.29</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">What are the pinning scenarios that prevent virtual thread unmounting? How do you avoid them?</p>
+      </div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>A virtual thread is pinned (cannot unmount from its carrier) when inside a <code>synchronized</code> block or when calling native code. Pinning during blocking wastes the carrier thread. Mitigation: replace <code>synchronized</code> with <code>ReentrantLock</code> in high-throughput paths. JVM flag <code>-Djdk.tracePinnedThreads</code> helps detect pinning.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">6.30</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is pattern matching in switch expressions (Java 21)? How does it work with sealed classes?</p>
+      </div>
+      <div class="q-why">Why asked: Switch expressions + sealed classes form a powerful algebraic data type pattern increasingly seen in modern Java codebases.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TOPIC 7: JVM INTERNALS ==================== -->
+<section id="jvm" class="section">
+  <div class="section-header">
+    <div class="section-icon">🔬</div>
+    <div>
+      <h2>Topic 7 — JVM Internals</h2>
+      <p class="section-subtitle">Memory, garbage collection, class loading, and JIT compilation</p>
+    </div>
+  </div>
+
+  <!-- JVM Architecture -->
+  <div class="topic-group">
+    <h3 class="topic-label">JVM Architecture &amp; Runtime Data Areas</h3>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">7.1</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">Describe the JVM architecture: what are its major components?</p>
+      </div>
+      <div class="q-why">Why asked: A high-level map of ClassLoader subsystem, Runtime Data Areas, and Execution Engine is foundational for performance discussions.</div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Three main subsystems: (1) Class Loader Subsystem (loading, linking, initializing). (2) Runtime Data Areas: heap, method area/metaspace, stack, PC register, native method stack. (3) Execution Engine: interpreter, JIT compiler, GC. Plus Native Interface (JNI) and Native Method Libraries.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">7.2</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the difference between Stack and Heap memory in Java? What is stored in each?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">7.3</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is Metaspace (Java 8+) and how does it differ from PermGen?</p>
+      </div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>PermGen was a fixed-size JVM region storing class metadata — a common source of <code>OutOfMemoryError: PermGen space</code>. Metaspace uses native (OS) memory and grows dynamically by default. It stores class metadata, static variables, interned strings moved to heap. Cap with <code>-XX:MaxMetaspaceSize</code>.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">7.4</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What causes a <code>StackOverflowError</code>? How is it different from <code>OutOfMemoryError</code>?</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- GC -->
+  <div class="topic-group">
+    <h3 class="topic-label">Garbage Collection</h3>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">7.5</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">Explain the Java heap generational structure: Eden, Survivor spaces (S0/S1), Old Gen. How does object promotion work?</p>
+      </div>
+      <div class="q-why">Why asked: Generational GC is the basis for all tuning conversations — expected knowledge for any performance-oriented role.</div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>New objects allocated in Eden. Minor GC copies live objects to Survivor space; objects surviving multiple GCs (threshold set by <code>-XX:MaxTenuringThreshold</code>) get promoted to Old Gen. Major GC collects Old Gen. Large objects (humongous allocations) go directly to Old Gen / G1 humongous regions.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">7.6</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">Compare GC algorithms: Serial, Parallel, CMS, G1, ZGC, and Shenandoah. When would you choose each?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">7.7</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">How does G1GC work? What are its regions, concurrent marking phases, and how does it achieve predictable pause times?</p>
+      </div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>G1 divides heap into equal-sized regions (typically 1–32 MB). It builds a "remembered set" per region to track inter-region references. Evacuation (copying) selects regions with most garbage first (hence "Garbage First"). Concurrent marking runs alongside application. Pause target set via <code>-XX:MaxGCPauseMillis</code>.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">7.8</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">What is ZGC and what sub-millisecond pause techniques does it use (colored pointers, load barriers)?</p>
+      </div>
+      <div class="q-why">Why asked: ZGC is the GC of choice for latency-sensitive services — senior engineers are expected to know its trade-offs.</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">7.9</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">What are key JVM GC tuning flags? Explain <code>-Xms</code>, <code>-Xmx</code>, <code>-XX:NewRatio</code>, <code>-XX:SurvivorRatio</code>, <code>-XX:+UseG1GC</code>.</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">7.10</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is a memory leak in Java? Give three real-world examples and explain how to detect them.</p>
+      </div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Classic examples: (1) Static collections growing unboundedly. (2) Unclosed streams/connections (pre try-with-resources). (3) Listeners/callbacks not deregistered. (4) ThreadLocal not removed in thread pools. (5) Custom classloaders preventing class unloading. Detection: heap dumps with <code>jmap</code>, analysis with Eclipse MAT or VisualVM.</p>
+      </details>
+    </div>
+  </div>
+
+  <!-- Class Loading -->
+  <div class="topic-group">
+    <h3 class="topic-label">Class Loading</h3>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">7.11</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">Explain the class loading delegation model. What are Bootstrap, Extension, and Application classloaders?</p>
+      </div>
+      <div class="q-why">Why asked: Classloading is critical in OSGi, application servers, and dynamic plugin systems — a classic J2EE interview question.</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">7.12</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">When and why would you write a custom classloader? What are the risks?</p>
+      </div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Use cases: hot-reload (dev tools), plugin isolation (load same class in different versions), loading from non-standard sources (DB, network). Risks: class identity crisis (two classloaders load same class → not equal), memory leaks if classloader isn't GC'd, interference with reflection and serialization.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">7.13</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the difference between class loading, linking, and initialization in the JVM lifecycle?</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- JIT -->
+  <div class="topic-group">
+    <h3 class="topic-label">JIT, AOT &amp; GraalVM</h3>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">7.14</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">How does JIT compilation work in the JVM? What are C1 and C2 compilers and how does tiered compilation decide between them?</p>
+      </div>
+      <div class="q-why">Why asked: JIT is why Java can match C++ performance in long-running apps — interviewers probe this for systems design awareness.</div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>C1 (client compiler): fast compilation with light optimizations — used early (levels 1–3). C2 (server compiler): aggressive optimizations (inlining, escape analysis, loop unrolling) for hot methods — level 4. Tiered compilation (default since Java 8) starts interpreted, promotes through C1 to C2 based on invocation counts and back-edge counts.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">7.15</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">What is GraalVM and how does ahead-of-time (AOT) native image compilation change Java's deployment model?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">7.16</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">What is escape analysis and how does it allow the JVM to perform stack allocation for objects?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">7.17</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What are safepoints in the JVM? Why do they matter for GC and profiling?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">7.18</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What tools would you use to diagnose high GC pause times in a production JVM? Walk through your diagnostic approach.</p>
+      </div>
+      <div class="q-why">Why asked: Practical SRE/performance question — tests ability to go from symptom (slow app) to root cause (GC tuning).</div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Approach: (1) Enable GC logging (<code>-Xlog:gc*</code>). (2) Analyze with GCViewer or GCEasy. (3) Check allocation rate, promotion rate, old gen occupancy. (4) Take heap dump on high usage (<code>jmap -dump</code>). (5) Analyze with Eclipse MAT. (6) Consider switching to G1/ZGC, tuning region size, or fixing allocation hot-spots via profiler (async-profiler, JFR).</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">7.19</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is Java Flight Recorder (JFR)? What types of events does it capture?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">7.20</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the String pool in Java? How does <code>String.intern()</code> work and when should you avoid it?</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TOPIC 8: DESIGN PATTERNS ==================== -->
+<section id="design-patterns" class="section">
+  <div class="section-header">
+    <div class="section-icon">🏗️</div>
+    <div>
+      <h2>Topic 8 — Design Patterns</h2>
+      <p class="section-subtitle">Creational, structural, and behavioral patterns with real Java/Spring examples</p>
+    </div>
+  </div>
+
+  <!-- Creational -->
+  <div class="topic-group">
+    <h3 class="topic-label">Creational Patterns</h3>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.1</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What are the thread-safe ways to implement Singleton in Java? Compare eager initialization, synchronized method, double-checked locking, and the initialization-on-demand holder idiom.</p>
+      </div>
+      <div class="q-why">Why asked: Singleton is the most-discussed creational pattern — its correct thread-safe implementation is a perennial interview staple.</div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Best approaches: (1) Eager init (static field): simple, thread-safe, but no lazy loading. (2) Enum singleton: serialization-safe, reflection-safe, best practice. (3) Holder idiom: lazy, thread-safe via class loading guarantee, no synchronization overhead. DCL requires <code>volatile</code> on the instance field to be correct.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.2</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">Why is the enum-based Singleton preferred over other implementations in Java?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.3</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the Factory Method pattern? How does it differ from Abstract Factory? Give a Java example for each.</p>
+      </div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Factory Method: defines an interface for creating one product; subclasses decide which class to instantiate. Example: <code>DocumentFactory.createDocument()</code> overridden by <code>PdfFactory</code>, <code>WordFactory</code>. Abstract Factory: creates families of related objects without specifying concrete classes. Example: UI toolkit factories (<code>WinFactory</code>, <code>MacFactory</code>) producing related Button + Checkbox sets.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.4</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the Builder pattern? When is it preferred over a telescoping constructor? How does Lombok's <code>@Builder</code> implement it?</p>
+      </div>
+      <div class="q-why">Why asked: Builder is ubiquitous in Java (StringBuilder, Hibernate Criteria, Spring MockMvc) — practical knowledge is expected.</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.5</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the Prototype pattern? How does Java's <code>Cloneable</code> and <code>clone()</code> implement it, and what are its pitfalls (shallow vs. deep copy)?</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Structural -->
+ <div class="topic">
+    <div class="topic-header">
+        <span class="topic-icon">🧵</span>
+        <h3>Thread Lifecycle &amp; Creation</h3>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.6</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the Adapter pattern? Give a real-world Java example (e.g., <code>Arrays.asList()</code>, <code>InputStreamReader</code>).</p>
+      </div>
+      <div class="q-why">Why asked: Adapter appears constantly in Java APIs — recognizing it in real code demonstrates practical pattern literacy.</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.7</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the Decorator pattern? How does <code>BufferedInputStream</code> wrapping <code>FileInputStream</code> exemplify it? How does it differ from subclassing?</p>
+      </div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Decorator wraps an object to add behavior at runtime without changing its class — favors composition over inheritance. <code>BufferedInputStream(new FileInputStream(...))</code> adds buffering to any <code>InputStream</code>. You can stack decorators (<code>GZIPInputStream(BufferedInputStream(...))</code>). Spring Security's filter chain is a decorator chain.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.8</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">What is the Proxy pattern? Explain the difference between static proxy, JDK dynamic proxy, and CGLIB proxy. How does Spring AOP use them?</p>
+      </div>
+      <div class="q-why">Why asked: Spring AOP is entirely proxy-based — misunderstanding proxy mechanics leads to classic Spring bugs (self-invocation bypassing advice).</div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>JDK dynamic proxy: interface-based, uses <code>Proxy.newProxyInstance()</code> + <code>InvocationHandler</code>. CGLIB: subclass-based, works without interfaces, used when target doesn't implement interfaces. Spring uses JDK proxy by default when interface exists; CGLIB otherwise. Self-invocation problem: internal method calls bypass the proxy — AOP advice not applied.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.9</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the Facade pattern? Give a Spring example (e.g., <code>JdbcTemplate</code> as a facade over JDBC).</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.10</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the Composite pattern? How is it used in Java UI frameworks or expression trees?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.11</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">What is the Flyweight pattern? How does Java's String pool and <code>Integer.valueOf()</code> cache implement it?</p>
+      </div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Flyweight shares intrinsic (immutable) state across many instances, storing extrinsic (context-specific) state outside. <code>Integer.valueOf()</code> caches -128 to 127; <code>==</code> comparison works within this range (common interview trick). String pool interns equal string literals. Use when you have thousands of similar objects with shared data.</p>
+      </details>
+    </div>
+  </div>
+
+  <!-- Behavioral -->
+  <div class="topic-group">
+    <h3 class="topic-label">Behavioral Patterns</h3>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.12</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the Strategy pattern? How does it differ from the Template Method pattern? Give a Java/Spring example of each.</p>
+      </div>
+      <div class="q-why">Why asked: These two are often confused — they both encapsulate algorithms but via different mechanisms (composition vs. inheritance).</div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Strategy: encapsulates interchangeable algorithms via composition — swap at runtime. Example: <code>Comparator</code> passed to <code>Collections.sort()</code>; Spring's <code>ResourceLoader</code> strategy. Template Method: defines algorithm skeleton in abstract class; subclasses fill in hooks. Example: <code>AbstractBeanFactory.getBean()</code>, <code>HttpServlet.doGet/doPost</code>.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.13</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the Observer pattern? How is it implemented with Java's <code>EventListener</code> or Spring's <code>ApplicationEvent</code>?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.14</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the Command pattern? How does it enable undo/redo functionality? Give an example in a Spring or messaging context.</p>
+      </div>
+      <div class="q-why">Why asked: Command pattern is the backbone of messaging systems, CQRS, and task queues.</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.15</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the Chain of Responsibility pattern? How does the Spring Security filter chain or servlet filter chain implement it?</p>
+      </div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Each handler either processes the request or passes it to the next handler in the chain. Spring Security's <code>SecurityFilterChain</code> links <code>UsernamePasswordAuthenticationFilter</code>, <code>JwtAuthFilter</code>, etc. Each filter calls <code>chain.doFilter()</code> to delegate. Decouples sender from receivers; allows dynamic chain composition.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.16</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the State pattern? How does it differ from using a switch/if-else state machine? Where is it used in Spring or Java frameworks?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.17</span>
+        <span class="badge badge-green">🟢 Basic</span>
+        <p class="q-text">What is the Iterator pattern? How does Java's <code>Iterable</code>/<code>Iterator</code> interface implement it?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.18</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">What is the Visitor pattern? When is it appropriate and what problem does it solve (open/closed principle for operations over object structures)?</p>
+      </div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>Visitor separates an algorithm from the object structure it operates on. Add new operations without modifying classes — implements double dispatch. Example: AST traversal in compilers, XML/JSON processing. Downside: adding new node types requires updating all visitors. Java's switch pattern matching over sealed classes is a modern alternative.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.19</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the Mediator pattern? How does Spring's <code>ApplicationContext</code> act as a mediator between beans?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.20</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">What are common anti-patterns in Java? Describe at least four: God Object, Anemic Domain Model, Service Locator, Lava Flow.</p>
+      </div>
+      <div class="q-why">Why asked: Identifying anti-patterns separates senior engineers who can critique architecture from juniors who just apply patterns mechanically.</div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p><strong>God Object</strong>: one class does everything — violates SRP. <strong>Anemic Domain Model</strong>: entities are dumb data bags; logic in services — loses OOP benefits. <strong>Service Locator</strong>: classes pull their own dependencies — hides coupling, hard to test (prefer constructor injection). <strong>Lava Flow</strong>: dead/legacy code kept "just in case". <strong>Magic Numbers</strong>: unnamed constants. <strong>Copy-Paste coding</strong>: code duplication over abstraction.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.21</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">How does the Repository pattern differ from the DAO pattern? How does Spring Data JPA implement Repository?</p>
+      </div>
+      <div class="q-why">Why asked: Repository vs DAO is a frequent senior interview question — subtle but important distinction in DDD contexts.</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.22</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What is the Specification pattern? How can you implement composable query specifications in Spring Data?</p>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.23</span>
+        <span class="badge badge-yellow">🟡 Intermediate</span>
+        <p class="q-text">What SOLID principles are violated by common anti-patterns? Give an example for each principle.</p>
+      </div>
+      <details class="hint-block">
+        <summary>💡 Hint</summary>
+        <p>SRP violation: God Object. OCP violation: switch on type instead of polymorphism. LSP violation: <code>Square extends Rectangle</code> breaking behavioral contracts. ISP violation: fat interface forcing empty implementations. DIP violation: high-level modules depending on <code>new ConcreteImpl()</code> directly instead of abstractions.</p>
+      </details>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.24</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">Describe how you would apply the Strategy + Factory pattern combination to implement a pluggable payment gateway system.</p>
+      </div>
+      <div class="q-why">Why asked: System design hybrid — tests ability to combine patterns to solve a real architectural problem, not just recite definitions.</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">8.25</span>
+        <span class="badge badge-red">🔴 Advanced</span>
+        <p class="q-text">What is the Null Object pattern? How does it eliminate null checks and where does Spring use it?</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- END SECTION 2 -->
