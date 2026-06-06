@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java Interview Master Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,700;9..144,800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --surface2: #f0ede6;
+    --border: #e2ddd4;
+    --text: #1a1714;
+    --text2: #5c5650;
+    --text3: #9c948a;
+    --accent: #c94f2c;
+    --accent2: #1d6b4e;
+    --accent3: #2a4d8f;
+    --accent-bg: #fdf1ed;
+    --sidebar-bg: #1a1714;
+    --sidebar-text: #e8e4dc;
+    --sidebar-hover: #c94f2c;
+    --sidebar-active: #c94f2c;
+    --badge-basic-bg: #d4f0e0;
+    --badge-basic-text: #1d6b4e;
+    --badge-inter-bg: #fef3c7;
+    --badge-inter-text: #92400e;
+    --badge-adv-bg: #fee2e2;
+    --badge-adv-text: #991b1b;
+    --hint-bg: #eff6ff;
+    --hint-border: #93c5fd;
+    --mark-btn: #e8e4dc;
+    --mark-btn-active: #fbbf24;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+  [data-theme="dark"] {
+    --bg: #111210;
+    --surface: #1c1b18;
+    --surface2: #242320;
+    --border: #32302c;
+    --text: #edeae2;
+    --text2: #a8a49c;
+    --text3: #6b675f;
+    --accent: #e8694a;
+    --accent2: #4ade80;
+    --accent3: #60a5fa;
+    --accent-bg: #2a1f1b;
+    --sidebar-bg: #0d0d0b;
+    --sidebar-text: #c8c4bc;
+    --badge-basic-bg: #14532d;
+    --badge-basic-text: #86efac;
+    --badge-inter-bg: #451a03;
+    --badge-inter-text: #fcd34d;
+    --badge-adv-bg: #450a0a;
+    --badge-adv-text: #fca5a5;
+    --hint-bg: #1e3a5f;
+    --hint-border: #3b82f6;
+    --mark-btn: #2a2925;
+    --mark-btn-active: #f59e0b;
+    --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.2);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; font-size: 15px; }
+
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    height: 60px;
+    background: var(--sidebar-bg);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px 0 236px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+  .header-title {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.3px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .header-title span.logo {
+    background: var(--accent);
+    color: #fff;
+    width: 30px; height: 30px;
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; font-weight: 700;
+  }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .question-counter {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #c8c4bc;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .question-counter strong { color: #fff; }
+  .marked-counter {
+    background: rgba(251,191,36,0.15);
+    border: 1px solid rgba(251,191,36,0.3);
+    color: #fbbf24;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .theme-toggle {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #fff;
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .theme-toggle:hover { background: rgba(255,255,255,0.15); }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    position: fixed; top: 60px; left: 0; bottom: 0;
+    width: 220px;
+    background: var(--sidebar-bg);
+    overflow-y: auto;
+    padding: 20px 0 40px;
+    border-right: 1px solid rgba(255,255,255,0.05);
+    z-index: 90;
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+  .sidebar-section-label {
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: rgba(255,255,255,0.25);
+    padding: 16px 18px 6px;
+  }
+  .sidebar a {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 18px;
+    color: var(--sidebar-text);
+    text-decoration: none;
+    font-size: 0.83rem;
+    font-weight: 400;
+    transition: all 0.15s;
+    border-left: 3px solid transparent;
+    line-height: 1.3;
+  }
+  .sidebar a:hover { color: #fff; background: rgba(255,255,255,0.06); }
+  .sidebar a.active { color: var(--sidebar-active); border-left-color: var(--sidebar-active); background: rgba(201,79,44,0.12); font-weight: 600; }
+  .sidebar a .nav-icon { font-size: 0.9rem; flex-shrink: 0; }
+  .sidebar-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 8px 0; }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: 220px;
+    padding: 80px 40px 60px;
+    max-width: 1060px;
+  }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 20px;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow-sm);
+  }
+  .legend-label { font-size: 0.78rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; margin-right: 4px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 0.75rem; font-weight: 600;
+  }
+  .badge.basic { background: var(--badge-basic-bg); color: var(--badge-basic-text); }
+  .badge.inter { background: var(--badge-inter-bg); color: var(--badge-inter-text); }
+  .badge.adv   { background: var(--badge-adv-bg);   color: var(--badge-adv-text); }
+
+  /* ── SECTION ── */
+  .section { margin-bottom: 56px; }
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--accent);
+    position: relative;
+  }
+  .section-icon {
+    width: 42px; height: 42px; border-radius: 10px;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; flex-shrink: 0;
+  }
+  .section-header h2 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 1.55rem; font-weight: 800;
+    color: var(--text); letter-spacing: -0.5px;
+  }
+  .section-count {
+    margin-left: auto;
+    background: var(--surface2); border: 1px solid var(--border);
+    padding: 3px 12px; border-radius: 20px;
+    font-size: 0.75rem; font-weight: 600; color: var(--text3);
+  }
+
+  /* ── TOPIC ── */
+  .topic { margin-bottom: 40px; }
+  .topic-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 18px;
+    padding: 10px 16px;
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    border-left: 4px solid var(--accent3);
+  }
+  .topic-header h3 {
+    font-size: 1rem; font-weight: 700; color: var(--text);
+    letter-spacing: -0.2px;
+  }
+  .topic-header .topic-icon { font-size: 1.1rem; }
+
+  /* ── QUESTION CARD ── */
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s, border-color 0.2s;
+    position: relative;
+  }
+  .q-card:hover { box-shadow: var(--shadow); border-color: var(--accent); }
+  .q-card.marked {
+    border-left: 4px solid var(--mark-btn-active);
+    background: color-mix(in srgb, var(--surface) 96%, var(--mark-btn-active));
+  }
+  .q-header { display: flex; align-items: flex-start; gap: 12px; }
+  .q-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem; font-weight: 500;
+    color: var(--text3);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 2px 8px; border-radius: 4px;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .q-text {
+    font-size: 0.93rem; font-weight: 500;
+    color: var(--text); flex: 1;
+    line-height: 1.6;
+  }
+  .q-meta {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 10px; margin-left: 48px;
+    flex-wrap: wrap;
+  }
+  .why-asked {
+    font-style: italic;
+    font-size: 0.8rem;
+    color: var(--text2);
+    margin-top: 8px;
+    margin-left: 48px;
+    padding-left: 12px;
+    border-left: 2px solid var(--border);
+  }
+
+  /* Mark button */
+  .mark-btn {
+    background: var(--mark-btn);
+    border: 1px solid var(--border);
+    width: 30px; height: 30px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    margin-left: auto;
+    color: var(--text3);
+  }
+  .mark-btn:hover { background: var(--mark-btn-active); color: #fff; transform: scale(1.08); }
+  .mark-btn.active { background: var(--mark-btn-active); color: #fff; border-color: var(--mark-btn-active); }
+
+  /* Hint/details */
+  details.hint-block {
+    margin-top: 12px;
+    margin-left: 48px;
+    background: var(--hint-bg);
+    border: 1px solid var(--hint-border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+  details.hint-block summary {
+    padding: 9px 14px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--accent3);
+    user-select: none;
+    list-style: none;
+    display: flex; align-items: center; gap: 6px;
+  }
+  details.hint-block summary::-webkit-details-marker { display: none; }
+  details.hint-block summary::before {
+    content: '▶'; font-size: 0.65rem; transition: transform 0.2s;
+  }
+  details.hint-block[open] summary::before { transform: rotate(90deg); }
+  .hint-content {
+    padding: 10px 14px 12px;
+    font-size: 0.83rem;
+    color: var(--text2);
+    line-height: 1.65;
+    border-top: 1px solid var(--hint-border);
+  }
+  .hint-content code {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    background: var(--surface2);
+    padding: 1px 5px; border-radius: 3px;
+    color: var(--accent);
+  }
+
+  /* Page intro */
+  .page-intro {
+    margin-bottom: 36px;
+    padding: 28px 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  .page-intro::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, #c94f2c, #2a4d8f, #1d6b4e);
+  }
+  .page-intro h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 2rem; font-weight: 800;
+    color: var(--text); letter-spacing: -1px;
+    margin-bottom: 8px;
+  }
+  .page-intro p { color: var(--text2); font-size: 0.9rem; }
+  .page-intro .meta-chips { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .chip {
+    padding: 4px 12px; border-radius: 20px;
+    font-size: 0.75rem; font-weight: 600;
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text2);
+  }
+  .chip.accent { background: var(--accent-bg); color: var(--accent); border-color: var(--accent); }
+
+  /* Print styles */
+  @media print {
+    .sidebar, .header, .theme-toggle, .mark-btn, details.hint-block summary { display: none !important; }
+    .main { margin-left: 0; padding: 20px; }
+    .q-card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+    body { background: white; color: black; }
+    .section-header { break-after: avoid; }
+  }
+
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); }
+    .main { margin-left: 0; padding: 80px 16px 40px; }
+    .header { padding-left: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header class="header">
+  <div class="header-title">
+    <span class="logo">J</span>
+    Java Interview Master Guide
+  </div>
+  <div class="header-right">
+    <div class="question-counter">📋 Total: <strong id="totalCount">0</strong> questions</div>
+    <div class="marked-counter">⭐ Marked: <strong id="markedCount">0</strong></div>
+    <button class="theme-toggle" id="themeToggle" title="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<!-- ══ SIDEBAR ══ -->
+<nav class="sidebar">
+  <div class="sidebar-section-label">Core Java</div>
+  <a href="#java-core" class="active"><span class="nav-icon">☕</span> Java Core</a>
+  <a href="#multithreading"><span class="nav-icon">🧵</span> Multithreading</a>
+  <a href="#java8plus"><span class="nav-icon">⚡</span> Java 8+</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section-label">Architecture</div>
+  <a href="#jvm-design"><span class="nav-icon">🏗️</span> JVM & Design Patterns</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section-label">Spring</div>
+  <a href="#spring-core"><span class="nav-icon">🍃</span> Spring Core</a>
+  <a href="#spring-boot"><span class="nav-icon">🚀</span> Spring Boot</a>
+  <a href="#spring-data"><span class="nav-icon">🔒</span> Spring Data & Security</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section-label">Microservices</div>
+  <a href="#ms-architecture"><span class="nav-icon">🔀</span> MS Architecture</a>
+  <a href="#ms-ops"><span class="nav-icon">⚙️</span> Microservices Ops</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section-label">Data & Systems</div>
+  <a href="#db-caching"><span class="nav-icon">🗄️</span> Database & Caching</a>
+  <a href="#system-design"><span class="nav-icon">📐</span> System Design</a>
+</nav>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+
+  <div class="page-intro">
+    <h1>Java Interview Master Guide</h1>
+    <p>A comprehensive, curated question bank for Java developers with 3+ years of experience. Covers everything from core fundamentals to distributed systems design.</p>
+    <div class="meta-chips">
+      <span class="chip accent">3+ Years Experience</span>
+      <span class="chip">11 Topic Sections</span>
+      <span class="chip">400+ Questions</span>
+      <span class="chip">⭐ Bookmark any question</span>
+    </div>
+  </div>
+
+  <!-- ── COLOR LEGEND ── -->
+  <div class="legend">
+    <span class="legend-label">Difficulty:</span>
+    <span class="badge basic">🟢 Basic</span>
+    <span class="badge inter">🟡 Intermediate</span>
+    <span class="badge adv">🔴 Advanced</span>
+    <span style="margin-left:auto;font-size:0.78rem;color:var(--text3)">⭐ Click the bookmark to mark questions for review</span>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       SECTION 1 – JAVA CORE
+  ════════════════════════════════════════════ -->
+  <section id="java-core" class="section">
+    <div class="section-header">
+      <div class="section-icon">☕</div>
+      <h2>Section 1 — Java Core</h2>
+      <span class="section-count" id="section1-count">Loading…</span>
+    </div>
+
+    <!-- ─── TOPIC 1: OOP & SOLID ─── -->
+    <div class="topic" id="topic-oop">
+      <div class="topic-header">
+        <span class="topic-icon">🧱</span>
+        <h3>Topic 1 — OOP Concepts &amp; SOLID Principles</h3>
+      </div>
+
+      <!-- Q1 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T1·Q1</span>
+          <span class="q-text">What are the four pillars of OOP, and can you give a real-world Java example for each?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+        <p class="why-asked">Why asked: Tests foundational understanding — interviewers check if candidates can connect theory to actual Java code.</p>
+      </div>
+
+      <!-- Q2 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T1·Q2</span>
+          <span class="q-text">Explain encapsulation. How does making a field <code style="font-family:monospace;background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:0.88rem">private</code> and providing getters/setters enforce it? What are the pitfalls of exposing mutable objects through getters?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+        <p class="why-asked">Why asked: Reveals whether the candidate understands defensive copying and truly grasps encapsulation beyond syntax.</p>
+      </div>
+
+      <!-- Q3 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T1·Q3</span>
+          <span class="q-text">What is abstraction, and how do abstract classes differ from interfaces in achieving it? When would you choose one over the other?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T1·Q4</span>
+          <span class="q-text">Describe the types of inheritance in Java. Why does Java not support multiple class inheritance, and how do default methods in interfaces partially address this?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+        <p class="why-asked">Why asked: The "diamond problem" question is classic — interviewers want to see if you know how Java 8's default methods introduced a new variant of it.</p>
+      </div>
+
+      <!-- Q5 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T1·Q5</span>
+          <span class="q-text">Explain compile-time (static) polymorphism vs runtime (dynamic) polymorphism with concrete examples. How does JVM achieve dynamic dispatch?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+        <details class="hint-block">
+          <summary>💡 Hint &amp; Answer Guide</summary>
+          <div class="hint-content">
+            Compile-time = method overloading (resolved by compiler based on parameter types). Runtime = method overriding via vtable lookup. JVM uses a virtual method table (vtable) per class; each object's reference points to its class's vtable. Invokevirtual bytecode instruction triggers dynamic dispatch. Key: <code>final</code>, <code>static</code>, and <code>private</code> methods are NOT dynamically dispatched — they use <code>invokestatic</code> or <code>invokespecial</code>.
+          </div>
+        </details>
+      </div>
+
+      <!-- Q6 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T1·Q6</span>
+          <span class="q-text">What is the difference between method overloading and method overriding? Can you override a static method? What about a private method?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+        <p class="why-asked">Why asked: Surprisingly many candidates confuse method hiding (static) with overriding — a favorite gotcha question.</p>
+      </div>
+
+      <!-- Q7 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T1·Q7</span>
+          <span class="q-text">What are the rules for valid method overriding in Java? Include covariant return types, access modifiers, and exceptions in your answer.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+      </div>
+
+      <!-- Q8 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T1·Q8</span>
+          <span class="q-text">Can an abstract class have a constructor? If so, when is it called and what is its purpose?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+      </div>
+
+      <!-- Q9 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T1·Q9</span>
+          <span class="q-text">What are default and static methods in interfaces (Java 8+)? What problem do they solve, and what happens when a class implements two interfaces with the same default method?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+        <p class="why-asked">Why asked: Tests Java 8 knowledge and conflict resolution — a compiler error forces explicit override, which many candidates miss.</p>
+        <details class="hint-block">
+          <summary>💡 Hint &amp; Answer Guide</summary>
+          <div class="hint-content">
+            If two interfaces define the same <code>default</code> method, the implementing class MUST override it or the code won't compile. You can explicitly call a specific interface's default via <code>InterfaceName.super.methodName()</code>. Static interface methods are not inherited by implementing classes — they must be called via the interface name directly.
+          </div>
+        </details>
+      </div>
+
+      <!-- Q10 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T1·Q10</span>
+          <span class="q-text">Explain the Single Responsibility Principle (SRP). Show a before/after Java example where a class violates SRP and how to refactor it.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+        <p class="why-asked">Why asked: SRP is the most cited but least practiced principle — interviewers check whether you can apply it in code, not just define it.</p>
+      </div>
+
+      <!-- Q11 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T1·Q11</span>
+          <span class="q-text">What is the Open/Closed Principle? How do Strategy pattern or abstract classes help achieve OCP in Java?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+      </div>
+
+      <!-- Q12 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T1·Q12</span>
+          <span class="q-text">Explain the Liskov Substitution Principle with a Java example of a violation (hint: Square/Rectangle problem) and how to fix it.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge adv">🔴 Advanced</span></div>
+        <details class="hint-block">
+          <summary>💡 Hint &amp; Answer Guide</summary>
+          <div class="hint-content">
+            Classic LSP violation: <code>Square extends Rectangle</code> overrides <code>setWidth/setHeight</code> to keep sides equal, breaking callers that expect independent dimensions. Fix: don't use inheritance — make both implement a <code>Shape</code> interface, or use composition. LSP is violated when a subclass changes postconditions or preconditions of the superclass contract.
+          </div>
+        </details>
+      </div>
+
+      <!-- Q13 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T1·Q13</span>
+          <span class="q-text">What is the Interface Segregation Principle? How does a "fat interface" violate ISP, and how would you refactor it?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+        <p class="why-asked">Why asked: ISP directly impacts API design — a poor understanding leads to bloated interfaces with many empty or stub implementations.</p>
+      </div>
+
+      <!-- Q14 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T1·Q14</span>
+          <span class="q-text">Explain the Dependency Inversion Principle. How does Spring's IoC container embody DIP? What's the difference between DIP and Dependency Injection?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge adv">🔴 Advanced</span></div>
+      </div>
+
+      <!-- Q15 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T1·Q15</span>
+          <span class="q-text">Why is composition preferred over inheritance? Give a real-world scenario where inheritance creates tight coupling and how composition solves it.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+        <p class="why-asked">Why asked: Exposes whether the candidate understands fragile base class problems and can design maintainable object hierarchies.</p>
+      </div>
+
+      <!-- Q16 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T1·Q16</span>
+          <span class="q-text">What is the difference between <code style="font-family:monospace;font-size:0.88rem">IS-A</code> and <code style="font-family:monospace;font-size:0.88rem">HAS-A</code> relationships? When does IS-A lead to wrong modeling?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+      </div>
+
+      <!-- Q17 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T1·Q17</span>
+          <span class="q-text">Can an interface extend multiple interfaces in Java? Can a class implement multiple interfaces? Explain with examples including default method conflicts.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+      </div>
+
+      <!-- Q18 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T1·Q18</span>
+          <span class="q-text">What are sealed classes (Java 17)? How do they relate to OCP and type-safe hierarchies? Give a use case where sealed classes are superior to regular inheritance.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge adv">🔴 Advanced</span></div>
+        <details class="hint-block">
+          <summary>💡 Hint &amp; Answer Guide</summary>
+          <div class="hint-content">
+            Sealed classes (<code>sealed class Shape permits Circle, Rectangle</code>) restrict which classes can extend them, enabling exhaustive pattern matching in switch expressions. They allow the compiler to verify completeness in <code>switch</code> without a default case. Good for domain models like <code>Result</code>, <code>Event</code>, or <code>Either</code> types where all variants are known at compile time.
+          </div>
+        </details>
+      </div>
+
+      <!-- Q19 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T1·Q19</span>
+          <span class="q-text">Explain method hiding vs method overriding. What output does <code style="font-family:monospace;font-size:0.88rem">Parent ref = new Child(); ref.staticMethod()</code> produce and why?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+        <p class="why-asked">Why asked: A classic trap — static methods are resolved at compile time based on the reference type, not the object type.</p>
+      </div>
+
+      <!-- Q20 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T1·Q20</span>
+          <span class="q-text">How do you apply all five SOLID principles together in a payment processing system design? Walk through your design decisions.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge adv">🔴 Advanced</span></div>
+        <p class="why-asked">Why asked: Integration question — tests whether candidates can synthesize principles together in a coherent design rather than reciting definitions in isolation.</p>
+      </div>
+
+    </div><!-- /topic-oop -->
+
+    <!-- ─── TOPIC 2: COLLECTIONS ─── -->
+    <div class="topic" id="topic-collections">
+      <div class="topic-header">
+        <span class="topic-icon">📦</span>
+        <h3>Topic 2 — Collections Framework</h3>
+      </div>
+
+      <!-- Q1 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q1</span>
+          <span class="q-text">What is the Collections framework hierarchy? Explain the relationship between <code style="font-family:monospace;font-size:0.88rem">Collection</code>, <code style="font-family:monospace;font-size:0.88rem">List</code>, <code style="font-family:monospace;font-size:0.88rem">Set</code>, <code style="font-family:monospace;font-size:0.88rem">Queue</code>, and <code style="font-family:monospace;font-size:0.88rem">Map</code>.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q2</span>
+          <span class="q-text">Compare ArrayList vs LinkedList: internal data structure, time complexities for add/remove/get, and when to use each.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+        <p class="why-asked">Why asked: Fundamental data structure question — wrong choices here cause real performance issues in production code.</p>
+      </div>
+
+      <!-- Q3 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q3</span>
+          <span class="q-text">How does ArrayList grow internally? What is its default initial capacity and growth factor? What is the cost of resizing?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+        <details class="hint-block">
+          <summary>💡 Hint &amp; Answer Guide</summary>
+          <div class="hint-content">
+            Default capacity = 10. Growth = <code>newCapacity = oldCapacity + (oldCapacity &gt;&gt; 1)</code> (i.e., 1.5× growth via right-shift). Resizing involves <code>Arrays.copyOf()</code>, which is O(n). Use <code>new ArrayList&lt;&gt;(expectedSize)</code> to pre-size when you know the expected number of elements, avoiding repeated resizing overhead.
+          </div>
+        </details>
+      </div>
+
+      <!-- Q4 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q4</span>
+          <span class="q-text">Why is Vector considered legacy? How does it differ from ArrayList in terms of thread safety, and what is the modern alternative for thread-safe lists?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+        <p class="why-asked">Why asked: Tests awareness of legacy APIs and modern concurrent alternatives like CopyOnWriteArrayList.</p>
+      </div>
+
+      <!-- Q5 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q5</span>
+          <span class="q-text">Explain HashMap's internal structure — buckets, hash function, and how key-value pairs are stored. What happens on hash collision?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+        <p class="why-asked">Why asked: One of the most common Java interview questions — deep understanding of internals separates strong candidates.</p>
+      </div>
+
+      <!-- Q6 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q6</span>
+          <span class="q-text">What is the load factor in HashMap? What are the default values, and how does rehashing work? When does Java 8 convert a linked list bucket to a tree?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge adv">🔴 Advanced</span></div>
+        <details class="hint-block">
+          <summary>💡 Hint &amp; Answer Guide</summary>
+          <div class="hint-content">
+            Default initial capacity = 16, default load factor = 0.75. Rehashing triggers when size &gt; capacity × loadFactor. Java 8: when a bucket's chain length exceeds <code>TREEIFY_THRESHOLD = 8</code> AND total map size ≥ <code>MIN_TREEIFY_CAPACITY = 64</code>, the linked list is converted to a Red-Black tree (O(log n) lookup vs O(n)). Tree converts back to list when size drops below <code>UNTREEIFY_THRESHOLD = 6</code>.
+          </div>
+        </details>
+      </div>
+
+      <!-- Q7 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q7</span>
+          <span class="q-text">What happens if you use a mutable object as a HashMap key and then mutate it? How does this relate to the hashCode contract?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge adv">🔴 Advanced</span></div>
+        <p class="why-asked">Why asked: A subtle bug — mutating a key after insertion makes it "lost" in the map since the hash slot changes. Reveals deep understanding of map internals.</p>
+      </div>
+
+      <!-- Q8 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q8</span>
+          <span class="q-text">Compare LinkedHashMap vs TreeMap vs HashMap — ordering guarantees, performance characteristics, and appropriate use cases.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+      </div>
+
+      <!-- Q9 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q9</span>
+          <span class="q-text">How does ConcurrentHashMap achieve thread safety without locking the entire map? How does it differ from <code style="font-family:monospace;font-size:0.88rem">Collections.synchronizedMap()</code>?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge adv">🔴 Advanced</span></div>
+        <details class="hint-block">
+          <summary>💡 Hint &amp; Answer Guide</summary>
+          <div class="hint-content">
+            Java 8 ConcurrentHashMap uses CAS (Compare-And-Swap) operations + synchronized on individual bucket heads (not the whole map). Segment-based locking from Java 7 was removed. Default concurrency level effectively allows multiple writers on different buckets simultaneously. <code>synchronizedMap</code> wraps every operation in a single mutex — one lock for the entire map — creating a bottleneck. ConcurrentHashMap also has atomic compound operations: <code>putIfAbsent</code>, <code>computeIfAbsent</code>, <code>merge</code>.
+          </div>
+        </details>
+      </div>
+
+      <!-- Q10 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q10</span>
+          <span class="q-text">Explain the difference between HashSet, LinkedHashSet, and TreeSet. How is HashSet backed internally?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+        <p class="why-asked">Why asked: HashSet is backed by a HashMap — knowing this reveals understanding of composition in the Collections API.</p>
+      </div>
+
+      <!-- Q11 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q11</span>
+          <span class="q-text">What is a PriorityQueue? How does it determine ordering, and what is its time complexity for insertion and poll?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+      </div>
+
+      <!-- Q12 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q12</span>
+          <span class="q-text">What is the difference between ArrayDeque and LinkedList as a Queue/Deque implementation? Which is generally preferred and why?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+        <p class="why-asked">Why asked: ArrayDeque is often the right answer but many candidates default to LinkedList — shows awareness of cache efficiency and memory overhead.</p>
+      </div>
+
+      <!-- Q13 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q13</span>
+          <span class="q-text">What is a BlockingQueue? Name three implementations and their use cases in producer-consumer patterns.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+      </div>
+
+      <!-- Q14 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q14</span>
+          <span class="q-text">Explain the contract between <code style="font-family:monospace;font-size:0.88rem">equals()</code> and <code style="font-family:monospace;font-size:0.88rem">hashCode()</code>. What happens if you override only equals without hashCode?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+        <details class="hint-block">
+          <summary>💡 Hint &amp; Answer Guide</summary>
+          <div class="hint-content">
+            Contract: if <code>a.equals(b)</code> then <code>a.hashCode() == b.hashCode()</code> (not necessarily vice versa). Violating this breaks HashMap/HashSet: two "equal" objects could hash to different buckets, so <code>set.contains(obj)</code> returns false even after you added an equal object. Always use <code>Objects.equals()</code> and <code>Objects.hash()</code> or IDE-generated implementations. In Java 16+, records auto-generate correct equals/hashCode.
+          </div>
+        </details>
+      </div>
+
+      <!-- Q15 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q15</span>
+          <span class="q-text">What is the difference between Comparable and Comparator? When would you implement each, and can a class implement both?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+        <p class="why-asked">Why asked: Tests understanding of natural ordering vs custom ordering — often asked in the context of TreeMap, PriorityQueue, or sorting collections.</p>
+      </div>
+
+      <!-- Q16 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q16</span>
+          <span class="q-text">What is the difference between fail-fast and fail-safe iterators? Give an example of each and explain why ConcurrentModificationException is thrown.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+      </div>
+
+      <!-- Q17 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q17</span>
+          <span class="q-text">How does CopyOnWriteArrayList achieve thread safety? What are its performance trade-offs and when should it NOT be used?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge adv">🔴 Advanced</span></div>
+        <p class="why-asked">Why asked: Understanding when NOT to use a tool is as important as knowing when to use it — heavy write workloads make COW extremely expensive.</p>
+      </div>
+
+      <!-- Q18 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q18</span>
+          <span class="q-text">What are <code style="font-family:monospace;font-size:0.88rem">Collections.unmodifiableList()</code> vs <code style="font-family:monospace;font-size:0.88rem">List.of()</code> vs <code style="font-family:monospace;font-size:0.88rem">List.copyOf()</code>? What are the differences in mutability, nulls, and backing?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+      </div>
+
+      <!-- Q19 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q19</span>
+          <span class="q-text">How do you sort a list of custom objects by multiple fields (e.g., by last name, then first name) using Comparator chaining in Java 8+?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+      </div>
+
+      <!-- Q20 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q20</span>
+          <span class="q-text">What is <code style="font-family:monospace;font-size:0.88rem">WeakHashMap</code>? Explain how it uses weak references and a practical use case for it.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge adv">🔴 Advanced</span></div>
+        <p class="why-asked">Why asked: Niche but revealing — tests knowledge of reference types and GC interaction, important for building caches.</p>
+      </div>
+
+      <!-- Q21 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q21</span>
+          <span class="q-text">What is the time complexity of operations in TreeMap? What data structure does it use internally?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+      </div>
+
+      <!-- Q22 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q22</span>
+          <span class="q-text">Explain how <code style="font-family:monospace;font-size:0.88rem">Map.computeIfAbsent()</code>, <code style="font-family:monospace;font-size:0.88rem">merge()</code>, and <code style="font-family:monospace;font-size:0.88rem">getOrDefault()</code> work. Give a use case for each.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+      </div>
+
+      <!-- Q23 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q23</span>
+          <span class="q-text">What is the difference between poll() and remove() in Queue, and between peek() and element()? What happens when the queue is empty for each?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+      </div>
+
+      <!-- Q24 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q24</span>
+          <span class="q-text">How would you implement an LRU cache in Java using LinkedHashMap? Walk through the access-order constructor and removeEldestEntry override.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge adv">🔴 Advanced</span></div>
+        <details class="hint-block">
+          <summary>💡 Hint &amp; Answer Guide</summary>
+          <div class="hint-content">
+            <code>new LinkedHashMap&lt;&gt;(capacity, 0.75f, true)</code> — the third parameter <code>accessOrder=true</code> re-orders on every get/put. Override <code>removeEldestEntry</code>: <code>return size() &gt; maxCapacity</code>. Wrap in <code>Collections.synchronizedMap()</code> or use explicit locking for thread safety. Time complexity: O(1) get/put. Alternatively, Caffeine library provides a production-grade, thread-safe LRU/LFU cache.
+          </div>
+        </details>
+      </div>
+
+      <!-- Q25 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T2·Q25</span>
+          <span class="q-text">What is the difference between <code style="font-family:monospace;font-size:0.88rem">IdentityHashMap</code> and <code style="font-family:monospace;font-size:0.88rem">HashMap</code>? In what scenario would you use IdentityHashMap?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge adv">🔴 Advanced</span></div>
+        <p class="why-asked">Why asked: Tests understanding that IdentityHashMap uses reference equality (==) not equals(), useful for object-graph traversal and serialization frameworks.</p>
+      </div>
+
+    </div><!-- /topic-collections -->
+
+    <!-- ─── TOPIC 3: GENERICS, ENUMS, ANNOTATIONS ─── -->
+    <div class="topic" id="topic-generics">
+      <div class="topic-header">
+        <span class="topic-icon">🔬</span>
+        <h3>Topic 3 — Generics, Enums &amp; Annotations</h3>
+      </div>
+
+      <!-- Q1 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T3·Q1</span>
+          <span class="q-text">What are generics in Java? What problems do they solve, and how do they interact with the type system at runtime?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T3·Q2</span>
+          <span class="q-text">What is type erasure? What are its implications at runtime — can you create <code style="font-family:monospace;font-size:0.88rem">new T()</code> or <code style="font-family:monospace;font-size:0.88rem">new T[]</code>? How does <code style="font-family:monospace;font-size:0.88rem">instanceof</code> work with generics?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge adv">🔴 Advanced</span></div>
+        <details class="hint-block">
+          <summary>💡 Hint &amp; Answer Guide</summary>
+          <div class="hint-content">
+            Type erasure replaces generic type parameters with their bounds (or Object if unbounded) at compile time. At runtime, <code>List&lt;String&gt;</code> and <code>List&lt;Integer&gt;</code> are both just <code>List</code>. Cannot do: <code>new T()</code>, <code>new T[]</code>, <code>instanceof List&lt;String&gt;</code>. Workarounds: pass a <code>Class&lt;T&gt;</code> token, use Guava's TypeToken or Jackson's TypeReference to retain type at runtime. <code>instanceof List&lt;?&gt;</code> (unbounded wildcard) IS allowed.
+          </div>
+        </details>
+      </div>
+
+      <!-- Q3 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T3·Q3</span>
+          <span class="q-text">Explain upper-bounded wildcards (<code style="font-family:monospace;font-size:0.88rem">? extends T</code>) vs lower-bounded wildcards (<code style="font-family:monospace;font-size:0.88rem">? super T</code>). What is the PECS principle?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+        <p class="why-asked">Why asked: PECS (Producer Extends, Consumer Super) is a key API design concept — misuse leads to type-unsafe or overly restrictive method signatures.</p>
+      </div>
+
+      <!-- Q4 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T3·Q4</span>
+          <span class="q-text">Why is <code style="font-family:monospace;font-size:0.88rem">List&lt;String&gt;</code> not a subtype of <code style="font-family:monospace;font-size:0.88rem">List&lt;Object&gt;</code>? What is the concept of invariance in generics, and how do arrays differ?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+        <details class="hint-block">
+          <summary>💡 Hint &amp; Answer Guide</summary>
+          <div class="hint-content">
+            Generics are invariant: <code>List&lt;String&gt;</code> is NOT a <code>List&lt;Object&gt;</code> — if it were, you could add an Integer to a List&lt;String&gt; through the Object reference, breaking type safety. Arrays ARE covariant (<code>String[]</code> is an <code>Object[]</code>), which is why <code>ArrayStoreException</code> exists at runtime. Use wildcards (<code>List&lt;? extends Object&gt;</code>) for covariance.
+          </div>
+        </details>
+      </div>
+
+      <!-- Q5 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T3·Q5</span>
+          <span class="q-text">How do you write a generic method in Java? Show an example of a generic utility method with a bounded type parameter.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T3·Q6</span>
+          <span class="q-text">What is heap pollution in generics? What does the <code style="font-family:monospace;font-size:0.88rem">@SafeVarargs</code> annotation do and when is it safe to use it?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge adv">🔴 Advanced</span></div>
+        <p class="why-asked">Why asked: Heap pollution with varargs is a subtle type safety issue — tests deep generics knowledge beyond basic usage.</p>
+      </div>
+
+      <!-- Q7 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T3·Q7</span>
+          <span class="q-text">Can you use generics with static fields or methods? What are the restrictions and why?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+      </div>
+
+      <!-- Q8 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T3·Q8</span>
+          <span class="q-text">What is an enum in Java? How is it different from a class? Can an enum have constructors, fields, and methods? Can it implement interfaces?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+      </div>
+
+      <!-- Q9 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T3·Q9</span>
+          <span class="q-text">How do you define abstract methods in an enum? Give a practical example where each enum constant provides a different implementation.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge adv">🔴 Advanced</span></div>
+        <details class="hint-block">
+          <summary>💡 Hint &amp; Answer Guide</summary>
+          <div class="hint-content">
+            Each enum constant can provide its own anonymous class body: <code>PLUS { public int apply(int x, int y) { return x + y; } }</code>. This is the "constant-specific method implementation" pattern from Effective Java. It's a clean alternative to switch statements on enums — behavior is encapsulated in the constant itself, following OCP. The abstract method forces every constant to provide an implementation.
+          </div>
+        </details>
+      </div>
+
+      <!-- Q10 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T3·Q10</span>
+          <span class="q-text">What are EnumSet and EnumMap? Why are they more efficient than HashSet/HashMap for enum keys?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+        <p class="why-asked">Why asked: EnumSet uses a bit-vector internally for O(1) operations — a performance win that many developers miss.</p>
+      </div>
+
+      <!-- Q11 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T3·Q11</span>
+          <span class="q-text">How do you safely get an enum constant from a string? What happens if the string doesn't match? How can you handle this gracefully?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+      </div>
+
+      <!-- Q12 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T3·Q12</span>
+          <span class="q-text">What is a Java annotation? Explain the difference between marker, single-value, and full annotations with examples.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+      </div>
+
+      <!-- Q13 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T3·Q13</span>
+          <span class="q-text">Explain <code style="font-family:monospace;font-size:0.88rem">@Retention</code> policy values — SOURCE, CLASS, and RUNTIME. When would you use each?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+        <p class="why-asked">Why asked: Misusing retention policy is a common mistake — if you need annotation-driven runtime behavior (like Spring), you MUST use RUNTIME.</p>
+      </div>
+
+      <!-- Q14 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T3·Q14</span>
+          <span class="q-text">What does <code style="font-family:monospace;font-size:0.88rem">@Target</code> control in an annotation definition? List the possible ElementType values.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+      </div>
+
+      <!-- Q15 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T3·Q15</span>
+          <span class="q-text">How do you create and process a custom annotation at runtime using reflection? Write a skeleton of a validation annotation processor.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge adv">🔴 Advanced</span></div>
+        <details class="hint-block">
+          <summary>💡 Hint &amp; Answer Guide</summary>
+          <div class="hint-content">
+            Define annotation with <code>@Retention(RUNTIME) @Target(FIELD)</code>. In the processor: use <code>clazz.getDeclaredFields()</code>, check <code>field.isAnnotationPresent(MyAnnotation.class)</code>, read values via <code>field.getAnnotation(MyAnnotation.class).value()</code>. Don't forget <code>field.setAccessible(true)</code> for private fields. This is exactly how Hibernate Validator, Jackson, and Spring work under the hood.
+          </div>
+        </details>
+      </div>
+
+      <!-- Q16 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T3·Q16</span>
+          <span class="q-text">What is annotation inheritance in Java? Can annotations be inherited by subclasses? What does <code style="font-family:monospace;font-size:0.88rem">@Inherited</code> do?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+      </div>
+
+      <!-- Q17 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T3·Q17</span>
+          <span class="q-text">What are repeatable annotations (Java 8)? How do you declare them using <code style="font-family:monospace;font-size:0.88rem">@Repeatable</code>?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+      </div>
+
+      <!-- Q18 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T3·Q18</span>
+          <span class="q-text">How do annotation processors (APT) work at compile time? Name two popular frameworks that heavily use compile-time annotation processing.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge adv">🔴 Advanced</span></div>
+        <p class="why-asked">Why asked: Compile-time annotation processing (Lombok, MapStruct) is heavily used in modern Java projects — understanding it shows framework-level depth.</p>
+      </div>
+
+      <!-- Q19 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T3·Q19</span>
+          <span class="q-text">Explain enum's <code style="font-family:monospace;font-size:0.88rem">ordinal()</code> and <code style="font-family:monospace;font-size:0.88rem">name()</code> methods. Why is it dangerous to persist enums by ordinal?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+      </div>
+
+      <!-- Q20 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T3·Q20</span>
+          <span class="q-text">Can generics be used with exceptions? Can you have a generic catch clause like <code style="font-family:monospace;font-size:0.88rem">catch (T e)</code>? What about throwing generic exceptions?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge adv">🔴 Advanced</span></div>
+        <details class="hint-block">
+          <summary>💡 Hint &amp; Answer Guide</summary>
+          <div class="hint-content">
+            You CANNOT catch a generic type (<code>catch (T e)</code> is a compile error) because of type erasure — the JVM can't distinguish types at runtime in catch blocks. However, you CAN declare generic throws: <code>&lt;T extends Exception&gt; void execute(Task&lt;T&gt; task) throws T</code>. This allows callers to catch the specific exception type. Used in libraries like Guava's <code>Throwables.propagateIfPossible</code>.
+          </div>
+        </details>
+      </div>
+
+    </div><!-- /topic-generics -->
+
+    <!-- ─── TOPIC 4: EXCEPTION HANDLING ─── -->
+    <div class="topic" id="topic-exceptions">
+      <div class="topic-header">
+        <span class="topic-icon">⚠️</span>
+        <h3>Topic 4 — Exception Handling</h3>
+      </div>
+
+      <!-- Q1 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T4·Q1</span>
+          <span class="q-text">What is the exception class hierarchy in Java? Draw the relationship between Throwable, Error, Exception, RuntimeException, and checked exceptions.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T4·Q2</span>
+          <span class="q-text">What is the difference between checked and unchecked exceptions? Give examples of each, and explain the philosophical debate around checked exceptions.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+        <p class="why-asked">Why asked: The "should we use checked exceptions" debate is ongoing — candidates who can articulate both sides show real experience.</p>
+      </div>
+
+      <!-- Q3 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T4·Q3</span>
+          <span class="q-text">What is try-with-resources? How does it work internally, and what interface must a resource implement?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T4·Q4</span>
+          <span class="q-text">What are suppressed exceptions in try-with-resources? How do you access them, and when are they created?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge adv">🔴 Advanced</span></div>
+        <details class="hint-block">
+          <summary>💡 Hint &amp; Answer Guide</summary>
+          <div class="hint-content">
+            If the <code>try</code> block throws AND <code>close()</code> also throws, the close-exception is suppressed to preserve the original exception. Access suppressed exceptions via <code>e.getSuppressed()</code>. Prior to try-with-resources (Java 7), developers had to manually suppress close exceptions using nested try-finally, often accidentally losing the original exception. This was a very real bug in many codebases.
+          </div>
+        </details>
+      </div>
+
+      <!-- Q5 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T4·Q5</span>
+          <span class="q-text">What is multi-catch syntax in Java 7+? What restriction exists on the exception variable in multi-catch, and why?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T4·Q6</span>
+          <span class="q-text">When is the finally block NOT executed? Name at least three scenarios where finally is skipped.</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+        <p class="why-asked">Why asked: Most candidates say "finally always runs" — but System.exit(), JVM crash, infinite loop, and thread kill are edge cases that trip up assumptions.</p>
+      </div>
+
+      <!-- Q7 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T4·Q7</span>
+          <span class="q-text">What value is returned from a method when both the try block and the finally block have return statements? What does the JVM do?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge adv">🔴 Advanced</span></div>
+        <details class="hint-block">
+          <summary>💡 Hint &amp; Answer Guide</summary>
+          <div class="hint-content">
+            The finally block's return OVERRIDES the try block's return — the try block's return value is silently discarded. This is considered bad practice. Similarly, if finally throws an exception, it overrides any exception from the try block. This is why returning from or throwing in finally blocks is a code smell flagged by static analysis tools like SonarQube.
+          </div>
+        </details>
+      </div>
+
+      <!-- Q8 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T4·Q8</span>
+          <span class="q-text">What are best practices for creating custom exceptions? When should you extend RuntimeException vs Exception?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+        <p class="why-asked">Why asked: Custom exception design directly impacts how usable and maintainable an API is — a common real-world design decision.</p>
+      </div>
+
+      <!-- Q9 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T4·Q9</span>
+          <span class="q-text">How do you re-throw an exception? What is the difference between <code style="font-family:monospace;font-size:0.88rem">throw e</code> and <code style="font-family:monospace;font-size:0.88rem">throw new WrapperException(e)</code>? How do you preserve the stack trace?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+      </div>
+
+      <!-- Q10 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T4·Q10</span>
+          <span class="q-text">What is exception chaining? How does passing the original exception as a cause to a new exception help with debugging?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+      </div>
+
+      <!-- Q11 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T4·Q11</span>
+          <span class="q-text">Should you catch <code style="font-family:monospace;font-size:0.88rem">Exception</code> or <code style="font-family:monospace;font-size:0.88rem">Throwable</code>? What are the risks of each, and when might catching Throwable be justified?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+        <p class="why-asked">Why asked: Catching Throwable includes Errors like OutOfMemoryError — doing so can mask JVM-level failures and prevent proper cleanup.</p>
+      </div>
+
+      <!-- Q12 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T4·Q12</span>
+          <span class="q-text">What is the difference between <code style="font-family:monospace;font-size:0.88rem">StackOverflowError</code> and <code style="font-family:monospace;font-size:0.88rem">OutOfMemoryError</code>? Are they recoverable?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge basic">🟢 Basic</span></div>
+      </div>
+
+      <!-- Q13 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T4·Q13</span>
+          <span class="q-text">How do you handle exceptions in lambdas and streams? Why can't you throw checked exceptions directly inside a lambda passed to <code style="font-family:monospace;font-size:0.88rem">forEach</code>?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge adv">🔴 Advanced</span></div>
+        <details class="hint-block">
+          <summary>💡 Hint &amp; Answer Guide</summary>
+          <div class="hint-content">
+            <code>Consumer&lt;T&gt;</code>'s <code>accept</code> method doesn't declare checked exceptions, so lambdas using it can't throw checked exceptions. Solutions: (1) wrap in try-catch inside the lambda, (2) create a functional interface that throws checked exceptions (<code>@FunctionalInterface ThrowingConsumer</code>), (3) use Lombok's <code>@SneakyThrows</code>, or (4) use Vavr's <code>CheckedFunction</code>. The cleanest approach for production is a custom wrapper function.
+          </div>
+        </details>
+      </div>
+
+      <!-- Q14 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T4·Q14</span>
+          <span class="q-text">What is an UncaughtExceptionHandler? How do you set one for a thread or for all threads globally?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge adv">🔴 Advanced</span></div>
+      </div>
+
+      <!-- Q15 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T4·Q15</span>
+          <span class="q-text">How do you implement a global exception handler in a Spring Boot application using <code style="font-family:monospace;font-size:0.88rem">@ControllerAdvice</code>? How does it relate to Java's exception handling model?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+        <p class="why-asked">Why asked: Bridges pure Java and Spring — tests practical experience in converting exceptions to meaningful HTTP responses.</p>
+      </div>
+
+      <!-- Q16 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T4·Q16</span>
+          <span class="q-text">What are the performance implications of exceptions? Should you use exceptions for flow control? Why or why not?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+      </div>
+
+      <!-- Q17 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T4·Q17</span>
+          <span class="q-text">What does the <code style="font-family:monospace;font-size:0.88rem">Closeable</code> interface add over <code style="font-family:monospace;font-size:0.88rem">AutoCloseable</code>? Can a resource's close() method throw a checked exception in try-with-resources?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+      </div>
+
+      <!-- Q18 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T4·Q18</span>
+          <span class="q-text">How do you write an exception-safe resource cleanup in Java without try-with-resources (e.g., for a legacy resource that doesn't implement AutoCloseable)?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge adv">🔴 Advanced</span></div>
+      </div>
+
+      <!-- Q19 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T4·Q19</span>
+          <span class="q-text">What is the difference between <code style="font-family:monospace;font-size:0.88rem">NoSuchMethodException</code>, <code style="font-family:monospace;font-size:0.88rem">NoSuchMethodError</code>, and <code style="font-family:monospace;font-size:0.88rem">UnsupportedOperationException</code>? When does each occur?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge inter">🟡 Intermediate</span></div>
+        <p class="why-asked">Why asked: Distinguishing between reflection-time, link-time, and runtime failures shows understanding of the JVM's class loading and verification phases.</p>
+      </div>
+
+      <!-- Q20 -->
+      <div class="q-card" data-section="1">
+        <div class="q-header">
+          <span class="q-num">T4·Q20</span>
+          <span class="q-text">Design an exception strategy for a layered application (Controller → Service → Repository). What exception types belong in each layer and how should translation work?</span>
+          <button class="mark-btn" title="Mark for review" onclick="toggleMark(this)">☆</button>
+        </div>
+        <div class="q-meta"><span class="badge adv">🔴 Advanced</span></div>
+        <details class="hint-block">
+          <summary>💡 Hint &amp; Answer Guide</summary>
+          <div class="hint-content">
+            Repository layer: throw <code>DataAccessException</code> (Spring wraps SQL exceptions). Service layer: translate to domain exceptions (<code>UserNotFoundException</code>, <code>InsufficientFundsException</code>). Controller layer: @ControllerAdvice maps domain exceptions to HTTP status codes. Never expose infrastructure exceptions (SQLException, HibernateException) to the presentation layer — this leaks implementation details. Use distinct exception hierarchies per bounded context.
+          </div>
+        </details>
+      </div>
+
+    </div><!-- /topic-exceptions -->
+
+  </section><!-- /java-core -->
+
+</main>
+
+<script>
+  // ── THEME TOGGLE ──
+  const html = document.documentElement;
+  const btn = document.getElementById('themeToggle');
+  const saved = localStorage.getItem('theme') || 'light';
+  html.setAttribute('data-theme', saved);
+  btn.textContent = saved === 'dark' ? '☀️' : '🌙';
+
+  btn.addEventListener('click', () => {
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    btn.textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  });
+
+  // ── MARK BUTTON ──
+  function toggleMark(btn) {
+    const card = btn.closest('.q-card');
+    const isMarked = card.classList.toggle('marked');
+    btn.classList.toggle('active', isMarked);
+    btn.textContent = isMarked ? '★' : '☆';
+    updateMarkedCount();
+  }
+
+  function updateMarkedCount() {
+    const count = document.querySelectorAll('.q-card.marked').length;
+    document.getElementById('markedCount').textContent = count;
+  }
+
+  // ── QUESTION COUNTER ──
+  function updateCounts() {
+    const total = document.querySelectorAll('.q-card').length;
+    document.getElementById('totalCount').textContent = total;
+
+    const s1 = document.querySelectorAll('[data-section="1"]').length;
+    const el = document.getElementById('section1-count');
+    if (el) el.textContent = s1 + ' questions';
+  }
+  updateCounts();
+
+  // ── ACTIVE NAV ──
+  const sections = document.querySelectorAll('section[id], div[id]');
+  const navLinks = document.querySelectorAll('.sidebar a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -60% 0px' });
+
+  document.querySelectorAll('section[id]').forEach(s => observer.observe(s));
+</script>
+
+<!-- END SECTION 1 -->
